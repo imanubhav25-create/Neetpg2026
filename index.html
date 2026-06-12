@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>NEET PG 2026 | Smart Tracker · Compare · Auto Timers</title>
-  <!-- Tailwind + Font Awesome + Chart.js -->
+  <title>NEET PG 2026 | Cross-Device Sync · Auto Timers</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -42,7 +41,7 @@
 <div id="loginScreen" class="fixed inset-0 bg-gray-100 z-50 flex items-center justify-center">
   <div class="login-container">
     <h1 class="text-2xl font-extrabold text-center bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">📘 NEET PG 2026</h1>
-    <p class="text-center text-gray-500 text-sm mb-6">Auto Timers · Compare Rank · Spaced Revision</p>
+    <p class="text-center text-gray-500 text-sm mb-6">Cross-Device Sync · Auto Timers · Spaced Revision</p>
     <div class="space-y-4">
       <input type="text" id="loginUsername" placeholder="Username" class="w-full border rounded-xl p-3">
       <input type="password" id="loginPassword" placeholder="Password" class="w-full border rounded-xl p-3">
@@ -58,7 +57,6 @@
 <!-- MAIN APP -->
 <div id="mainApp" style="display: none;">
   <div class="max-w-5xl mx-auto px-4 py-4 pb-20">
-    <!-- Header -->
     <div class="flex flex-wrap justify-between items-center gap-3 mb-4 sticky top-0 bg-[#f1f5f9] z-10 pb-2">
       <div class="flex items-center gap-3">
         <h1 class="text-xl font-extrabold bg-gradient-to-r from-indigo-800 to-purple-800 bg-clip-text text-transparent">📘 NEET PG 2026</h1>
@@ -84,17 +82,15 @@
         <div class="bg-white rounded-xl shadow p-2 text-center"><i class="fas fa-clock text-amber-600"></i><p class="text-xs">Today Hours</p><p id="todayHoursSpan" class="text-xl font-bold">0</p></div>
         <div class="bg-white rounded-xl shadow p-2 text-center"><i class="fas fa-chart-line text-purple-600"></i><p class="text-xs">Total Hours</p><p id="totalHoursSpan" class="text-xl font-bold">0</p></div>
       </div>
-      <!-- Daily Checklist -->
       <div class="bg-white rounded-2xl shadow-md p-4 mb-4"><h2 class="font-bold text-lg mb-2"><i class="fas fa-tasks text-indigo-600"></i> Daily Target Checklist</h2><div id="checklistContainer" class="space-y-2"></div><div class="flex gap-2 mt-2"><button id="addCustomTargetBtn" class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full">+ Add target</button><button id="resetTargetsBtn" class="text-gray-400 text-xs">Reset</button></div></div>
-      <!-- Daily Activity Slots -->
       <div class="bg-white rounded-2xl shadow-md p-4">
-        <div class="flex justify-between items-center mb-2 flex-wrap gap-2"><h2 class="font-bold text-lg"><i class="fas fa-clock text-amber-600"></i> Daily Activity Slots</h2><div class="text-sm bg-gray-100 px-3 py-1 rounded-full">✅ Done: <span id="slotsDoneCount">0</span>/<span id="slotsTotalCount">0</span></div></div>
+        <div class="flex justify-between items-center mb-2 flex-wrap gap-2"><h2 class="font-bold text-lg"><i class="fas fa-clock text-amber-600"></i> Daily Activity Slots</h2><div class="text-sm bg-gray-100 px-3 py-1 rounded-full">✅ Done: <span id="slotsDoneCount">0</span>/<span id="slotsTotalCount">0</span><span class="ml-2 text-green-600 text-xs"><i class="fas fa-magic"></i> Auto timers</span></div></div>
         <div id="slotsContainer" class="space-y-3"></div>
         <div class="flex justify-between mt-3"><button id="saveSlotsBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs">Save slots</button><button id="resetDefaultSlotsBtn" class="text-gray-400 text-xs">Reset default</button></div>
       </div>
     </div>
 
-    <!-- REVISION PAGE (no spaced filter box) -->
+    <!-- REVISION PAGE -->
     <div id="revisionPage" class="page">
       <div class="bg-white rounded-2xl shadow-md p-4">
         <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
@@ -127,7 +123,7 @@
 
     <!-- COMPARE PAGE -->
     <div id="comparePage" class="page">
-      <div class="bg-white rounded-2xl shadow-md p-4"><h2 class="font-bold text-lg mb-2"><i class="fas fa-chart-simple"></i> Compare & Rank <i class="fas fa-toggle-on text-indigo-500 ml-1"></i></h2>
+      <div class="bg-white rounded-2xl shadow-md p-4"><h2 class="font-bold text-lg mb-2"><i class="fas fa-chart-simple"></i> Compare & Rank </h2>
         <div class="flex flex-wrap gap-3 mb-4 border-b pb-3">
           <select id="compareMetricSelect" class="border rounded-lg p-1 text-sm"><option value="totalHours">📊 Total Hours</option><option value="totalPyq">📚 Total PYQs</option><option value="dailyHours">⏱️ Daily Avg Hours</option><option value="dailyPyq">🎯 Daily Avg PYQ</option><option value="gtDone">🏆 GT Done</option><option value="swtDone">📘 SWT Done</option><option value="revDone">✅ Revisions Done</option></select>
           <button id="refreshCompareBtn" class="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm">Update Graph & Rank</button>
@@ -142,7 +138,6 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <div class="bottom-nav">
       <div class="nav-item active" data-page="home"><i class="fas fa-home"></i><span>Home</span></div>
       <div class="nav-item" data-page="revision"><i class="fas fa-calendar-alt"></i><span>Revision</span></div>
@@ -155,40 +150,94 @@
 </div>
 
 <script>
-  // ---------- GOOGLE APPS SCRIPT URL ----------
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLBLZuPMq71xTZYcqrHTXZWS8GiMHuVm5tLqq2SRdosZPOFCFvKKav35jSr2jeEIEt/exec";
+  // ---------- YOUR GOOGLE APPS SCRIPT URL ----------
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgHyRI31DhcCwcrEcsFuB8HWPEy21QnNb5MS5YoFR08MqfWjor_mvA1Z1rWweVs_21/exec";
   
   // ---------- AUTH & DATA ----------
   let usersAuth = {};
   let currentUser = null;
   let userData = null;
-  let slotTimers = {};
-  
+  let slotActiveIntervals = {};
+
   function loadAuth() { let a = localStorage.getItem("neet_auth"); if(a) usersAuth = JSON.parse(a); else usersAuth = {}; }
   function saveAuth() { localStorage.setItem("neet_auth", JSON.stringify(usersAuth)); }
   function hashPassword(pw) { return btoa(pw + "neet2026"); }
   function registerUser(username, password) { if(usersAuth[username]) return false; usersAuth[username] = { passwordHash: hashPassword(password), data: defaultUserData() }; saveAuth(); return true; }
   function loginUser(username, password) { if(usersAuth[username] && usersAuth[username].passwordHash === hashPassword(password)) { currentUser = username; userData = usersAuth[currentUser].data; return true; } return false; }
-  function saveCurrentUserData() { if(currentUser && userData) { usersAuth[currentUser].data = userData; saveAuth(); autoSyncToSheet(); } }
+  function saveCurrentUserData() { if(currentUser && userData) { usersAuth[currentUser].data = userData; saveAuth(); } }
   function defaultUserData() { return { checklist: defaultChecklist(), dailySlots: defaultSlots(), revisions: [], studyEntries: [], testEntries: [] }; }
   function defaultChecklist() { return ["📘 1 SUBJECT","📊 2 MCQ - CM","🎯 3 Mid Day -PYQ","🌙 4 Late Night PYQ","🔄 5 Revision","📖 6 Subject - short","🧠 7 Subject -PYQ","⚡ 8 Revision -PYQ"].map(t=>({text:t,completed:false})); }
   function defaultSlots() { return [
-    { slotName:"6:00-8:00am", timeRange:"6:00-8:00", activity:"Yesterday Subject Revision", completed:false, timerSeconds:0 },
-    { slotName:"8:00-9:00am", timeRange:"8:00-9:00", activity:"MIX 40 PYQ", completed:false, timerSeconds:0 },
-    { slotName:"9:15-11:00am", timeRange:"9:15-11:00", activity:"Revision", completed:false, timerSeconds:0 },
-    { slotName:"11:30-1:30pm", timeRange:"11:30-13:30", activity:"New subject", completed:false, timerSeconds:0 },
-    { slotName:"2:30-3:00pm", timeRange:"14:30-15:00", activity:"Mix 25 PYQ", completed:false, timerSeconds:0 },
-    { slotName:"3:00-6:50pm", timeRange:"15:00-18:50", activity:"New subject", completed:false, timerSeconds:0 },
-    { slotName:"6:30-8:30pm", timeRange:"18:30-20:30", activity:"Revision", completed:false, timerSeconds:0 },
-    { slotName:"10:00-12:00am", timeRange:"22:00-24:00", activity:"Late night PYQ", completed:false, timerSeconds:0 }
+    { slotName:"6:00-8:00am", timeRange:"6:00-8:00", activity:"Yesterday Subject Revision", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"8:00-9:00am", timeRange:"8:00-9:00", activity:"MIX 40 PYQ", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"9:15-11:00am", timeRange:"9:15-11:00", activity:"Revision", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"11:30-1:30pm", timeRange:"11:30-13:30", activity:"New subject", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"2:30-3:00pm", timeRange:"14:30-15:00", activity:"Mix 25 PYQ", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"3:00-6:50pm", timeRange:"15:00-18:50", activity:"New subject", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"6:30-8:30pm", timeRange:"18:30-20:30", activity:"Revision", completed:false, totalSecs:0, activeStart:null },
+    { slotName:"10:00-12:00am", timeRange:"22:00-24:00", activity:"Late night PYQ", completed:false, totalSecs:0, activeStart:null }
   ]; }
   
   function getCurrentISTMinutes() { let now = new Date(); let istOffset = 5.5 * 60 * 60 * 1000; let istTime = new Date(now.getTime() + istOffset + now.getTimezoneOffset() * 60000); return istTime.getHours() * 60 + istTime.getMinutes(); }
   function parseTimeRange(range) { let [startStr, endStr] = range.split('-'); let [startH, startM] = startStr.split(':').map(Number); let [endH, endM] = endStr.split(':').map(Number); return { start: startH*60+startM, end: endH*60+endM }; }
   
-  function startSlotTimer(idx) { if(slotTimers[idx]) return; let startTime = Date.now(); slotTimers[idx] = setInterval(() => { if(userData.dailySlots[idx]) { let elapsed = Math.floor((Date.now() - startTime) / 1000); userData.dailySlots[idx].timerSeconds = elapsed; renderSlots(); } }, 1000); }
-  function stopSlotTimer(idx, logHours=true) { if(slotTimers[idx]) { clearInterval(slotTimers[idx]); delete slotTimers[idx]; let elapsedSec = userData.dailySlots[idx].timerSeconds || 0; if(logHours && elapsedSec > 30) { let hours = elapsedSec / 3600; let todayIST = new Date().toLocaleString("en-US", {timeZone:"Asia/Kolkata"}).split(",")[0]; let [m,d,y] = todayIST.split("/"); let todayStr = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`; let slotName = userData.dailySlots[idx].slotName; addStudyLog(todayStr, "Activity Slot", slotName, 0, hours, `Timer: ${slotName}`, false); } userData.dailySlots[idx].timerSeconds = 0; saveCurrentUserData(); renderSlots(); } }
+  // Timer functions
+  function startSlotTimer(idx) {
+    if(slotActiveIntervals[idx]) return;
+    if(userData.dailySlots[idx].completed) return;
+    let slot = userData.dailySlots[idx];
+    slot.activeStart = Date.now();
+    slotActiveIntervals[idx] = setInterval(() => {
+      if(!userData.dailySlots[idx]) return;
+      let s = userData.dailySlots[idx];
+      if(s.activeStart) {
+        let elapsedSec = Math.floor((Date.now() - s.activeStart) / 1000);
+        s.totalSecs = (s.totalSecs || 0) + elapsedSec;
+        s.activeStart = Date.now();
+        renderSlots();
+        saveCurrentUserData();
+      }
+    }, 1000);
+    renderSlots();
+  }
+  function stopSlotTimer(idx, logStudy=true) {
+    if(!slotActiveIntervals[idx]) return;
+    let slot = userData.dailySlots[idx];
+    if(slot && slot.activeStart) {
+      let addedSec = Math.floor((Date.now() - slot.activeStart) / 1000);
+      if(addedSec > 0) slot.totalSecs = (slot.totalSecs || 0) + addedSec;
+      slot.activeStart = null;
+      if(logStudy && addedSec > 30) {
+        let hours = addedSec / 3600;
+        let todayIST = new Date().toLocaleString("en-US", {timeZone:"Asia/Kolkata"}).split(",")[0];
+        let [m,d,y] = todayIST.split("/");
+        let todayStr = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+        addStudyLog(todayStr, "Auto Slot", slot.activity, 0, hours, `Auto timer: ${slot.slotName}`, false);
+      }
+      saveCurrentUserData();
+    }
+    clearInterval(slotActiveIntervals[idx]);
+    delete slotActiveIntervals[idx];
+    renderSlots();
+  }
+  function stopAllTimers() { Object.keys(slotActiveIntervals).forEach(idx => stopSlotTimer(parseInt(idx), false)); }
+  function autoManageTimers() {
+    if(!userData) return;
+    let nowMin = getCurrentISTMinutes();
+    userData.dailySlots.forEach((slot, idx) => {
+      if(slot.completed) {
+        if(slotActiveIntervals[idx]) stopSlotTimer(idx, false);
+        return;
+      }
+      let range = parseTimeRange(slot.timeRange);
+      let isActive = (nowMin >= range.start && nowMin < range.end);
+      if(isActive && !slotActiveIntervals[idx]) startSlotTimer(idx);
+      else if(!isActive && slotActiveIntervals[idx]) stopSlotTimer(idx, true);
+    });
+    renderSlots();
+  }
   
+  // Study & revision helpers
   function generateSpacedRevisions(subject, topic, baseDate) { [2,4,7,14,30].forEach(day => { let d = new Date(baseDate); d.setDate(d.getDate()+day); userData.revisions.push({ id: Date.now()+Math.random()+day, subject, topic, dueDate: d.toISOString().slice(0,10), slot:`Day ${day}`, completed:false }); }); saveCurrentUserData(); renderCalendarAndReminders(); }
   function addStudyLog(date, subject, topic, pyq, hours, notes, genRev) { if(!topic.trim()) return false; userData.studyEntries.push({ id:Date.now(), date, subject, topic:topic.trim(), pyqCount:Number(pyq)||0, hours:parseFloat(hours)||0, notes }); if(genRev) generateSpacedRevisions(subject, topic.trim(), date); saveCurrentUserData(); updateHomeMetrics(); updateTopicPerformance(); renderCalendarAndReminders(); return true; }
   function addTestEntry(type, subject, score, date) { userData.testEntries.push({ id:Date.now(), type, subject:subject||type, score:Number(score), date }); saveCurrentUserData(); renderTestHistoryAndChart(); }
@@ -203,52 +252,49 @@
   function updateHomeMetrics() { let today = new Date().toISOString().slice(0,10); let todayPyq=0, todayHours=0, totalPyq=0, totalHours=0; (userData.studyEntries||[]).forEach(e=>{ totalPyq+=e.pyqCount; totalHours+=e.hours; if(e.date===today){ todayPyq+=e.pyqCount; todayHours+=e.hours; } }); document.getElementById("todayPyqSpan").innerText = todayPyq; document.getElementById("todayHoursSpan").innerText = todayHours.toFixed(1); document.getElementById("totalPyqSumSpan").innerText = totalPyq; document.getElementById("totalHoursSpan").innerText = totalHours.toFixed(1); let gtCount = (userData.testEntries||[]).filter(t=>t.type==="GT").length; let swtCount = (userData.testEntries||[]).filter(t=>t.type==="SWT").length; if(document.getElementById("gtCount")) { document.getElementById("gtCount").innerText = gtCount; document.getElementById("swtCount").innerText = swtCount; } }
   function renderChecklist() { let cont=document.getElementById("checklistContainer"); if(!cont) return; cont.innerHTML = userData.checklist.map((item,idx)=>`<div class="flex items-center gap-2 p-1 border-b"><input type="checkbox" ${item.completed?"checked":""} data-idx="${idx}"><span class="flex-1 text-sm ${item.completed?"line-through text-gray-400":""}">${escapeHtml(item.text)}</span><button class="text-red-400 text-xs" data-del="${idx}"><i class="fas fa-trash-alt"></i></button></div>`).join(""); attachChecklistEvents(); }
   function attachChecklistEvents(){ document.querySelectorAll("#checklistContainer input").forEach(cb=>cb.addEventListener("change",(e)=>{ let idx=cb.dataset.idx; userData.checklist[idx].completed=cb.checked; saveCurrentUserData(); renderChecklist(); })); document.querySelectorAll("#checklistContainer [data-del]").forEach(btn=>btn.addEventListener("click",(e)=>{ let idx=btn.dataset.del; userData.checklist.splice(idx,1); saveCurrentUserData(); renderChecklist(); })); }
-  function renderSlots() { let cont=document.getElementById("slotsContainer"); if(!cont) return; let doneCount = userData.dailySlots.filter(s=>s.completed).length; document.getElementById("slotsDoneCount").innerText = doneCount; document.getElementById("slotsTotalCount").innerText = userData.dailySlots.length; cont.innerHTML = userData.dailySlots.map((slot,idx)=>`<div class="slot-card"><div class="flex flex-wrap items-center gap-2"><div class="w-28 text-xs font-bold">${slot.slotName}</div><input type="text" class="flex-1 border rounded p-1 text-sm" value="${escapeHtml(slot.activity)}" data-slotidx="${idx}"><div class="text-xs font-mono w-16 bg-gray-100 rounded px-1">${Math.floor(slot.timerSeconds/60)}:${(slot.timerSeconds%60).toString().padStart(2,'0')}</div><button class="timer-btn ${slotTimers[idx]?'timer-running':''}" data-idx="${idx}">${slotTimers[idx]?'⏹️ Stop':'▶️ Start'}</button><label><input type="checkbox" class="slot-complete" data-cidx="${idx}" ${slot.completed?"checked":""}> Done</label></div><div class="text-[10px] text-gray-400 mt-1">🕒 ${slot.timeRange || 'Set time'} IST</div></div>`).join(""); attachSlotEvents(); }
-  function attachSlotEvents(){ document.querySelectorAll("input[data-slotidx]").forEach(inp=>inp.addEventListener("change",(e)=>{ let idx=inp.dataset.slotidx; userData.dailySlots[idx].activity=inp.value; saveCurrentUserData(); })); document.querySelectorAll(".slot-complete").forEach(ch=>ch.addEventListener("change",(e)=>{ let idx=ch.dataset.cidx; if(ch.checked) { if(slotTimers[idx]) stopSlotTimer(idx, true); userData.dailySlots[idx].completed=true; } else { userData.dailySlots[idx].completed=false; } saveCurrentUserData(); renderSlots(); })); document.querySelectorAll(".timer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{ let idx=parseInt(btn.dataset.idx); if(slotTimers[idx]) stopSlotTimer(idx, true); else startSlotTimer(idx); renderSlots(); })); }
+  function renderSlots() { let cont=document.getElementById("slotsContainer"); if(!cont) return; let doneCount = userData.dailySlots.filter(s=>s.completed).length; document.getElementById("slotsDoneCount").innerText = doneCount; document.getElementById("slotsTotalCount").innerText = userData.dailySlots.length; cont.innerHTML = userData.dailySlots.map((slot,idx)=>`<div class="slot-card"><div class="flex flex-wrap items-center gap-2"><div class="w-28 text-xs font-bold">${slot.slotName}</div><input type="text" class="flex-1 border rounded p-1 text-sm" value="${escapeHtml(slot.activity)}" data-slotidx="${idx}"><div class="text-xs font-mono w-16 bg-gray-100 rounded px-1">${Math.floor(slot.totalSecs/60)}:${(slot.totalSecs%60).toString().padStart(2,'0')}</div><button class="timer-btn ${slotActiveIntervals[idx]?'timer-running':''}" data-idx="${idx}">${slotActiveIntervals[idx]?'⏹️ Stop':'▶️ Start'}</button><label><input type="checkbox" class="slot-complete" data-cidx="${idx}" ${slot.completed?"checked":""}> Done</label></div><div class="text-[10px] text-gray-400 mt-1">🕒 ${slot.timeRange} IST ${slotActiveIntervals[idx]?'🔴 Active':''}</div></div>`).join(""); attachSlotEvents(); }
+  function attachSlotEvents(){ document.querySelectorAll("input[data-slotidx]").forEach(inp=>inp.addEventListener("change",(e)=>{ let idx=inp.dataset.slotidx; userData.dailySlots[idx].activity=inp.value; saveCurrentUserData(); })); document.querySelectorAll(".slot-complete").forEach(ch=>ch.addEventListener("change",(e)=>{ let idx=ch.dataset.cidx; if(ch.checked) { if(slotActiveIntervals[idx]) stopSlotTimer(idx, true); userData.dailySlots[idx].completed=true; } else { userData.dailySlots[idx].completed=false; } saveCurrentUserData(); renderSlots(); })); document.querySelectorAll(".timer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{ let idx=parseInt(btn.dataset.idx); if(slotActiveIntervals[idx]) stopSlotTimer(idx, true); else startSlotTimer(idx); renderSlots(); })); }
   
   let currentCalDate = new Date();
   function renderCalendarAndReminders() { if(!document.getElementById("calendarGrid")) return; let year=currentCalDate.getFullYear(), month=currentCalDate.getMonth(); let firstDay=new Date(year,month,1).getDay(), daysInMonth=new Date(year,month+1,0).getDate(); let todayStr=new Date().toISOString().slice(0,10); let html=""; for(let i=0;i<firstDay;i++) html+="<div class='calendar-day other-month'></div>"; for(let d=1;d<=daysInMonth;d++){ let dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; let hasRev=userData.revisions.some(r=>r.dueDate===dateStr); let cls=`calendar-day ${hasRev?'has-revision':''} ${dateStr===todayStr?'today':''}`; html+=`<div class="${cls}" data-date="${dateStr}">${d}${hasRev?'<div class="revision-badge text-[9px]">📌</div>':''}</div>`; } document.getElementById("calendarGrid").innerHTML=html; document.getElementById("monthYearLabel").innerText=new Date(year,month).toLocaleString('default',{month:'long', year:'numeric'}); document.querySelectorAll(".calendar-day[data-date]").forEach(el=>el.addEventListener("click",()=>showRevisionsForDate(el.dataset.date))); let today=todayStr, yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10); let todayRevs=userData.revisions.filter(r=>r.dueDate===today && !r.completed).map(r=>`<div class="flex justify-between items-center bg-yellow-50 p-1 rounded"><span>📖 ${r.subject} - ${r.topic}</span><button class="complete-rev text-green-600" data-id="${r.id}">✔️</button></div>`); let yesterdayRevs=userData.revisions.filter(r=>r.dueDate===yesterday && r.completed).map(r=>`<div>✅ ${r.subject} - ${r.topic}</div>`); document.getElementById("todayRevisionList").innerHTML=todayRevs.length?todayRevs.join(""):"<div class='text-gray-400'>No pending revisions</div>"; document.getElementById("yesterdayRevisionList").innerHTML=yesterdayRevs.length?yesterdayRevs.join(""):"<div class='text-gray-400'>Nothing revised yesterday</div>"; document.querySelectorAll(".complete-rev").forEach(btn=>btn.addEventListener("click",(e)=>{ let id=btn.dataset.id; let rev=userData.revisions.find(r=>r.id==id); if(rev) rev.completed=true; saveCurrentUserData(); renderCalendarAndReminders(); updateTopicPerformance(); })); showRevisionsForDate(today); }
   function showRevisionsForDate(date) { document.getElementById("selectedDateLabel").innerText = date; let revs = userData.revisions.filter(r=>r.dueDate === date); let container = document.getElementById("selectedDateRevisionList"); if(container) container.innerHTML = revs.length ? revs.map(r=>`<div class="revision-card flex justify-between"><div><b>${r.subject}</b> - ${r.topic}<br><span class="text-xs">${r.slot} ${r.completed?'✅':''}</span></div>${!r.completed?`<button class="complete-rev-date text-green-600" data-id="${r.id}">✔️</button>`:''}</div>`).join("") : "<div class='text-gray-400'>No revisions</div>"; document.querySelectorAll(".complete-rev-date").forEach(btn=>btn.addEventListener("click",(e)=>{ let id=btn.dataset.id; let rev=userData.revisions.find(r=>r.id==id); if(rev) rev.completed=true; saveCurrentUserData(); renderCalendarAndReminders(); updateTopicPerformance(); showRevisionsForDate(date); })); }
   function updateTopicPerformance() { let sub = document.getElementById("perfSubjectSelect")?.value || "Anatomy"; let map = new Map(); (userData.studyEntries||[]).filter(e=>e.subject===sub).forEach(e=>{ let t=e.topic; if(!map.has(t)) map.set(t,{pyq:0,revDone:0,lastRev:null}); map.get(t).pyq += e.pyqCount; }); (userData.revisions||[]).filter(r=>r.subject===sub).forEach(r=>{ let t=r.topic; if(!map.has(t)) map.set(t,{pyq:0,revDone:0,lastRev:null}); let d=map.get(t); if(r.completed) d.revDone++; if(r.dueDate && (!d.lastRev || r.dueDate>d.lastRev)) d.lastRev=r.dueDate; }); let tbody=document.getElementById("topicPerfTable"); if(tbody) tbody.innerHTML = Array.from(map.entries()).map(([topic,vals])=>`<tr class="border-b"><td class="p-1">${escapeHtml(topic)}</td><td>${vals.pyq}</td><td>${vals.revDone}</td><td class="text-xs">${vals.lastRev||"—"}</td></tr>`).join(""); }
   function renderTestHistoryAndChart() { let historyDiv=document.getElementById("testHistoryList"); if(historyDiv) historyDiv.innerHTML = userData.testEntries.slice().reverse().map(t=>`<div class="border-b p-1">${t.type} | ${t.subject} | ${t.score}% | ${t.date}</div>`).join(""); let sorted = [...userData.testEntries].sort((a,b)=>new Date(a.date)-new Date(b.date)); let ctx = document.getElementById("testScoreChart").getContext("2d"); if(window.testChart) window.testChart.destroy(); window.testChart = new Chart(ctx, { type:'line', data:{ labels:sorted.map(t=>t.date.slice(5)), datasets:[{ label:'Test Score %', data:sorted.map(t=>t.score), borderColor:'#8b5cf6', tension:0.2 }] }, options:{ responsive:true } }); updateHomeMetrics(); }
-  
-  function buildCompareTableAndChart() {
-    let metrics = [];
-    for(let [uname, auth] of Object.entries(usersAuth)){
-      let d = auth.data;
-      let entries = d.studyEntries || [];
-      let totalHours = entries.reduce((s,e)=>s+(e.hours||0),0);
-      let totalPyq = entries.reduce((s,e)=>s+(e.pyqCount||0),0);
-      let daysStudied = new Set(entries.map(e=>e.date)).size;
-      let dailyHours = daysStudied ? totalHours/daysStudied : 0;
-      let dailyPyq = daysStudied ? totalPyq/daysStudied : 0;
-      let tests = d.testEntries || [];
-      let gtDone = tests.filter(t=>t.type==="GT").length;
-      let swtDone = tests.filter(t=>t.type==="SWT").length;
-      let revDone = (d.revisions||[]).filter(r=>r.completed).length;
-      metrics.push({ user:uname, totalHours, totalPyq, dailyHours, dailyPyq, gtDone, swtDone, revDone, revs: d.revisions || [], studyEntries: entries });
-    }
-    metrics.forEach(m=>{ m.rankScore = (m.totalPyq||0) + (m.totalHours||0)*5 + (m.revDone||0)*2; });
-    metrics.sort((a,b)=>b.rankScore - a.rankScore);
-    let tbody = document.getElementById("compareTableBody");
-    if(tbody) tbody.innerHTML = metrics.map((m,idx)=>`<tr class="border-b ${m.user===currentUser?'bg-indigo-50':''}"><td class="p-1 font-bold">${idx+1}</td><td>${m.user}</td><td>${m.totalHours.toFixed(1)}</td><td>${m.totalPyq}</td><td>${m.dailyHours.toFixed(1)}</td><td>${m.dailyPyq.toFixed(1)}</td><td>${m.gtDone}</td><td>${m.swtDone}</td><td>${m.revDone}</td></tr>`).join("");
-    let selectedMetric = document.getElementById("compareMetricSelect").value;
-    let chartData = metrics.map(m=>m[selectedMetric]);
-    let ctx = document.getElementById("compareChart").getContext("2d");
-    if(window.compareChart) window.compareChart.destroy();
-    window.compareChart = new Chart(ctx, { type:'bar', data:{ labels:metrics.map(m=>m.user), datasets:[{ label:selectedMetric.replace(/([A-Z])/g,' $1').trim(), data:chartData, backgroundColor:'#4f46e5' }] }, options:{ responsive:true } });
-    let last7Days = [...Array(7)].map((_,i)=>{ let d=new Date(); d.setDate(d.getDate()-i); return d.toISOString().slice(0,10); });
-    let topicsMap = new Map();
-    for(let m of metrics){ let topicsSet = new Set(); m.revs.filter(r=> r.completed && last7Days.includes(r.dueDate)).forEach(r=> topicsSet.add(`${r.subject}: ${r.topic}`)); topicsMap.set(m.user, Array.from(topicsSet).slice(0,8)); }
-    document.getElementById("compareTopicsList").innerHTML = Array.from(topicsMap.entries()).map(([u,topics])=>`<div class="mb-2"><b>${u}</b><br>${topics.join(", ")}</div>`).join("");
-    let yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
-    let yesterdayMap = new Map();
-    for(let m of metrics){ let studyEntries = m.studyEntries.filter(e=>e.date===yesterday).map(e=>`📖 ${e.subject}: ${e.topic} (${e.pyqCount} PYQ, ${e.hours}h)`); let completedRevs = m.revs.filter(r=> r.completed && r.dueDate===yesterday).map(r=>`✅ Revised: ${r.subject} - ${r.topic}`); let all = [...studyEntries, ...completedRevs]; yesterdayMap.set(m.user, all.slice(0,6)); }
-    document.getElementById("compareYesterdayList").innerHTML = Array.from(yesterdayMap.entries()).map(([u, entries])=>`<div class="mb-2"><b>${u}</b><br>${entries.join(", ")}</div>`).join("");
-  }
-  
+  function buildCompareTableAndChart() { let metrics = []; for(let [uname, auth] of Object.entries(usersAuth)){ let d = auth.data; let entries = d.studyEntries || []; let totalHours = entries.reduce((s,e)=>s+(e.hours||0),0); let totalPyq = entries.reduce((s,e)=>s+(e.pyqCount||0),0); let daysStudied = new Set(entries.map(e=>e.date)).size; let dailyHours = daysStudied ? totalHours/daysStudied : 0; let dailyPyq = daysStudied ? totalPyq/daysStudied : 0; let tests = d.testEntries || []; let gtDone = tests.filter(t=>t.type==="GT").length; let swtDone = tests.filter(t=>t.type==="SWT").length; let revDone = (d.revisions||[]).filter(r=>r.completed).length; metrics.push({ user:uname, totalHours, totalPyq, dailyHours, dailyPyq, gtDone, swtDone, revDone, revs: d.revisions || [], studyEntries: entries }); } metrics.forEach(m=>{ m.rankScore = (m.totalPyq||0) + (m.totalHours||0)*5 + (m.revDone||0)*2; }); metrics.sort((a,b)=>b.rankScore - a.rankScore); let tbody = document.getElementById("compareTableBody"); if(tbody) tbody.innerHTML = metrics.map((m,idx)=>`<tr class="border-b ${m.user===currentUser?'bg-indigo-50':''}"><td class="p-1 font-bold">${idx+1}</td><td>${m.user}</td><td>${m.totalHours.toFixed(1)}</td><td>${m.totalPyq}</td><td>${m.dailyHours.toFixed(1)}</td><td>${m.dailyPyq.toFixed(1)}</td><td>${m.gtDone}</td><td>${m.swtDone}</td><td>${m.revDone}</td></tr>`).join(""); let selectedMetric = document.getElementById("compareMetricSelect").value; let chartData = metrics.map(m=>m[selectedMetric]); let ctx = document.getElementById("compareChart").getContext("2d"); if(window.compareChart) window.compareChart.destroy(); window.compareChart = new Chart(ctx, { type:'bar', data:{ labels:metrics.map(m=>m.user), datasets:[{ label:selectedMetric.replace(/([A-Z])/g,' $1').trim(), data:chartData, backgroundColor:'#4f46e5' }] }, options:{ responsive:true } }); let last7Days = [...Array(7)].map((_,i)=>{ let d=new Date(); d.setDate(d.getDate()-i); return d.toISOString().slice(0,10); }); let topicsMap = new Map(); for(let m of metrics){ let topicsSet = new Set(); m.revs.filter(r=> r.completed && last7Days.includes(r.dueDate)).forEach(r=> topicsSet.add(`${r.subject}: ${r.topic}`)); topicsMap.set(m.user, Array.from(topicsSet).slice(0,8)); } document.getElementById("compareTopicsList").innerHTML = Array.from(topicsMap.entries()).map(([u,topics])=>`<div class="mb-2"><b>${u}</b><br>${topics.join(", ")}</div>`).join(""); let yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10); let yesterdayMap = new Map(); for(let m of metrics){ let studyEntries = m.studyEntries.filter(e=>e.date===yesterday).map(e=>`📖 ${e.subject}: ${e.topic} (${e.pyqCount} PYQ, ${e.hours}h)`); let completedRevs = m.revs.filter(r=> r.completed && r.dueDate===yesterday).map(r=>`✅ Revised: ${r.subject} - ${r.topic}`); let all = [...studyEntries, ...completedRevs]; yesterdayMap.set(m.user, all.slice(0,6)); } document.getElementById("compareYesterdayList").innerHTML = Array.from(yesterdayMap.entries()).map(([u, entries])=>`<div class="mb-2"><b>${u}</b><br>${entries.join(", ")}</div>`).join(""); }
   function updateFlipCountdown() { let target = new Date(2026,7,30); let now = new Date(); let diff = target-now; if(diff<=0 || (now.getMonth()===7 && now.getDate()>=30)) { document.getElementById("daysBox").innerText="00"; document.getElementById("hoursBox").innerText="00"; document.getElementById("minsBox").innerText="00"; document.getElementById("secsBox").innerText="00"; return; } document.getElementById("daysBox").innerText = Math.floor(diff/(86400000)).toString().padStart(2,'0'); document.getElementById("hoursBox").innerText = Math.floor((diff%86400000)/3600000).toString().padStart(2,'0'); document.getElementById("minsBox").innerText = Math.floor((diff%3600000)/60000).toString().padStart(2,'0'); document.getElementById("secsBox").innerText = Math.floor((diff%60000)/1000).toString().padStart(2,'0'); setTimeout(updateFlipCountdown,1000); }
-  let syncInterval; function autoSyncToSheet() { if(GOOGLE_SCRIPT_URL) fetch(GOOGLE_SCRIPT_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ action:"syncUser", user:currentUser, data:userData }) }).catch(e=>console.log); } function startAutoSync() { if(GOOGLE_SCRIPT_URL) syncInterval = setInterval(autoSyncToSheet, 15000); }
+  
+  // ---------- GOOGLE SHEETS SYNC (PUSH & PULL) ----------
+  async function pushToSheet() {
+    if(!currentUser) return;
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "syncUser", user: currentUser, data: userData })
+      });
+      const text = await response.text();
+      console.log("Push sync response:", text);
+    } catch(e) { console.warn("Push error", e); }
+  }
+  async function pullFromSheet(username) {
+    try {
+      const response = await fetch(`${GOOGLE_SCRIPT_URL}?user=${encodeURIComponent(username)}`, { method: "GET", mode: "cors" });
+      if (response.ok) {
+        const remoteData = await response.json();
+        if (remoteData && typeof remoteData === 'object' && Object.keys(remoteData).length) {
+          usersAuth[username].data = remoteData;
+          saveAuth();
+          return true;
+        }
+      }
+    } catch(e) { console.warn("Pull error", e); }
+    return false;
+  }
+  let syncInterval;
+  function startAutoSync() { if(GOOGLE_SCRIPT_URL) syncInterval = setInterval(pushToSheet, 15000); }
+  
+  // UI helpers
   function populateSubjectSelectors() { let subjSelect=document.getElementById("perfSubjectSelect"); if(subjSelect) subjSelect.innerHTML=ALL_SUBJECTS.map(s=>`<option>${s}</option>`).join(''); let logSubj=document.getElementById("logSubject"); if(logSubj) logSubj.innerHTML=ALL_SUBJECTS.map(s=>`<option>${s}</option>`).join(''); }
   function updateUnitDropdown(subject){ let sel=document.getElementById("logUnitTopic"); if(sel) sel.innerHTML=(subjectUnits[subject]||["General"]).map(u=>`<option>${u}</option>`).join(''); }
   function displaySubjectUnits(subject){ let cont=document.getElementById("subjectUnitsContainer"); if(cont) cont.innerHTML=(subjectUnits[subject]||[]).map(u=>`<span class="unit-chip">${escapeHtml(u)}</span>`).join(''); }
@@ -260,11 +306,11 @@
     updateUnitDropdown(document.getElementById("logSubject")?.value || "Anatomy");
     document.getElementById("logSubject")?.addEventListener("change",(e)=>updateUnitDropdown(e.target.value));
     document.getElementById("perfSubjectSelect")?.addEventListener("change",()=>{ updateTopicPerformance(); displaySubjectUnits(document.getElementById("perfSubjectSelect").value); });
-    renderChecklist(); renderSlots(); renderCalendarAndReminders(); updateHomeMetrics(); updateTopicPerformance(); renderTestHistoryAndChart();
+    renderChecklist(); renderSlots(); renderCalendarAndReminders(); updateHomeMetrics(); updateTopicPerformance(); renderTestHistoryAndChart(); displaySubjectUnits("Anatomy");
     document.getElementById("addCustomTargetBtn").onclick=()=>{ let t=prompt("New target"); if(t) userData.checklist.push({text:t,completed:false}); saveCurrentUserData(); renderChecklist(); };
     document.getElementById("resetTargetsBtn").onclick=()=>{ userData.checklist=defaultChecklist(); saveCurrentUserData(); renderChecklist(); };
     document.getElementById("saveSlotsBtn").onclick=()=>{ saveCurrentUserData(); alert("Slots saved"); };
-    document.getElementById("resetDefaultSlotsBtn").onclick=()=>{ userData.dailySlots=defaultSlots(); saveCurrentUserData(); renderSlots(); };
+    document.getElementById("resetDefaultSlotsBtn").onclick=()=>{ stopAllTimers(); userData.dailySlots=defaultSlots(); saveCurrentUserData(); renderSlots(); };
     document.getElementById("prevMonthBtn").onclick=()=>{ currentCalDate.setMonth(currentCalDate.getMonth()-1); renderCalendarAndReminders(); };
     document.getElementById("nextMonthBtn").onclick=()=>{ currentCalDate.setMonth(currentCalDate.getMonth()+1); renderCalendarAndReminders(); };
     document.getElementById("studyLogForm").onsubmit=(e)=>{ e.preventDefault(); addStudyLog(document.getElementById("logDate").value, document.getElementById("logSubject").value, document.getElementById("logUnitTopic").value, document.getElementById("logPyqCount").value, document.getElementById("logHours").value, document.getElementById("logNotes").value, document.getElementById("generateRevisionCheckbox").checked); document.getElementById("logPyqCount").value="0"; document.getElementById("logNotes").value=""; alert("Logged! Revisions created."); };
@@ -273,16 +319,41 @@
     document.getElementById("addTestEntryBtn").onclick=()=> switchPage("tests");
     document.getElementById("refreshCompareBtn").onclick=()=> buildCompareTableAndChart();
     document.getElementById("compareMetricSelect").onchange=()=> buildCompareTableAndChart();
-    document.getElementById("logoutBtn").onclick=()=>{ clearInterval(syncInterval); location.reload(); };
+    document.getElementById("logoutBtn").onclick=()=>{ clearInterval(syncInterval); stopAllTimers(); location.reload(); };
     document.querySelectorAll(".nav-item").forEach(nav=>nav.addEventListener("click",()=>switchPage(nav.dataset.page)));
-    document.getElementById("syncToSheetBtn").onclick=()=>{ autoSyncToSheet(); alert("Sync requested"); };
-    updateFlipCountdown(); startAutoSync();
+    document.getElementById("syncToSheetBtn").onclick=async()=>{ await pushToSheet(); alert("Sync pushed to sheet"); };
+    updateFlipCountdown(); startAutoSync(); setInterval(()=>autoManageTimers(), 30000); autoManageTimers();
   }
   
+  // ---------- LOGIN HANDLERS WITH PULL ----------
   loadAuth();
-  document.getElementById("loginBtn").onclick = () => { let uname = document.getElementById("loginUsername").value.trim(); let pwd = document.getElementById("loginPassword").value; if(loginUser(uname, pwd)) { document.getElementById("loginScreen").style.display = "none"; document.getElementById("mainApp").style.display = "block"; initMainApp(); } else alert("Invalid credentials"); };
-  document.getElementById("demoLoginBtn").onclick = () => { if(!usersAuth["demo"]) registerUser("demo", "demo123"); if(loginUser("demo", "demo123")) { document.getElementById("loginScreen").style.display = "none"; document.getElementById("mainApp").style.display = "block"; initMainApp(); } };
-  document.getElementById("registerBtn").onclick = () => { let uname = document.getElementById("loginUsername").value.trim(); let pwd = document.getElementById("loginPassword").value; if(uname && pwd && registerUser(uname, pwd)) alert("Account created! Please login."); else alert("Username exists or empty"); };
+  document.getElementById("loginBtn").onclick = async () => {
+    let uname = document.getElementById("loginUsername").value.trim();
+    let pwd = document.getElementById("loginPassword").value;
+    if (loginUser(uname, pwd)) {
+      await pullFromSheet(uname);  // Load remote data
+      userData = usersAuth[currentUser].data;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("mainApp").style.display = "block";
+      initMainApp();
+    } else alert("Invalid credentials");
+  };
+  document.getElementById("demoLoginBtn").onclick = async () => {
+    if (!usersAuth["demo"]) registerUser("demo", "demo123");
+    if (loginUser("demo", "demo123")) {
+      await pullFromSheet("demo");
+      userData = usersAuth["demo"].data;
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("mainApp").style.display = "block";
+      initMainApp();
+    }
+  };
+  document.getElementById("registerBtn").onclick = () => {
+    let uname = document.getElementById("loginUsername").value.trim();
+    let pwd = document.getElementById("loginPassword").value;
+    if (uname && pwd && registerUser(uname, pwd)) alert("Account created! Please login.");
+    else alert("Username exists or empty");
+  };
   function escapeHtml(str){ return String(str).replace(/[&<>]/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
   loadUnits();
 </script>
