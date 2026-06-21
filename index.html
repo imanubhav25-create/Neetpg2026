@@ -44,7 +44,6 @@
     .stat-card { background: white; border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; }
     .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
     .stat-number { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #4f46e5, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .progress-ring { transition: stroke-dashoffset 0.5s; }
   </style>
 </head>
 <body>
@@ -97,12 +96,16 @@
         <div class="stat-card"><i class="fas fa-chart-line text-purple-600 text-xl"></i><p class="text-xs text-gray-500 mt-1">Total Hours</p><p id="totalHoursSpan" class="stat-number text-2xl">0</p></div>
       </div>
       <!-- Daily Checklist -->
-      <div class="bg-white rounded-2xl shadow-md p-4 mb-4 hover:shadow-lg transition"><h2 class="font-bold text-lg mb-2"><i class="fas fa-tasks text-indigo-600"></i> Daily Target Checklist</h2><div id="checklistContainer" class="space-y-2"></div><div class="flex gap-2 mt-2"><button id="addCustomTargetBtn" class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full hover:bg-indigo-200 transition">+ Add target</button><button id="resetTargetsBtn" class="text-gray-400 text-xs hover:text-gray-600 transition">Reset</button></div></div>
+      <div class="bg-white rounded-2xl shadow-md p-4 mb-4 hover:shadow-lg transition">
+        <div class="flex justify-between items-center"><h2 class="font-bold text-lg"><i class="fas fa-tasks text-indigo-600"></i> Today's Checklist</h2><span class="text-xs text-gray-400" id="todayChecklistDate"></span></div>
+        <div id="checklistContainer" class="space-y-2 mt-2"></div>
+        <div class="flex gap-2 mt-2"><button id="addCustomTargetBtn" class="bg-indigo-100 text-indigo-700 text-xs px-3 py-1 rounded-full hover:bg-indigo-200 transition">+ Add target</button><button id="resetTargetsBtn" class="text-gray-400 text-xs hover:text-gray-600 transition">Reset today</button></div>
+      </div>
       <!-- Daily Activity Slots -->
       <div class="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition">
-        <div class="flex justify-between items-center mb-2 flex-wrap gap-2"><h2 class="font-bold text-lg"><i class="fas fa-clock text-amber-600"></i> Daily Activity Slots</h2><div class="text-sm bg-gray-100 px-3 py-1 rounded-full">✅ Done: <span id="slotsDoneCount">0</span>/<span id="slotsTotalCount">0</span></div></div>
+        <div class="flex justify-between items-center mb-2 flex-wrap gap-2"><h2 class="font-bold text-lg"><i class="fas fa-clock text-amber-600"></i> Today's Activity Slots</h2><div class="text-sm bg-gray-100 px-3 py-1 rounded-full">✅ Done: <span id="slotsDoneCount">0</span>/<span id="slotsTotalCount">0</span></div></div>
         <div id="slotsContainer" class="space-y-3"></div>
-        <div class="flex justify-between mt-3"><button id="saveSlotsBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs hover:bg-indigo-700 transition">Save slots</button><button id="resetDefaultSlotsBtn" class="text-gray-400 text-xs hover:text-gray-600 transition">Reset default</button></div>
+        <div class="flex justify-between mt-3"><button id="saveSlotsBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-xl text-xs hover:bg-indigo-700 transition">Save slots</button><button id="resetDefaultSlotsBtn" class="text-gray-400 text-xs hover:text-gray-600 transition">Reset today's slots</button></div>
       </div>
     </div>
 
@@ -132,7 +135,7 @@
       <div class="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition"><div class="flex justify-between items-center flex-wrap mb-3"><h2 class="font-bold"><i class="fas fa-chart-line text-green-600"></i> Subject Performance</h2><select id="perfSubjectSelect" class="border rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"></select></div><div id="subjectUnitsContainer" class="flex flex-wrap gap-1 mb-3"></div><div class="overflow-x-auto max-h-60 overflow-y-auto"><table class="min-w-full text-sm border"><thead class="bg-gray-100"><tr><th>Topic/Unit</th><th>PYQs</th><th>Revisions Done</th><th>Last Revision</th></tr></thead><tbody id="topicPerfTable"></tbody></table></div></div>
     </div>
 
-    <!-- SELF PROGRESS PAGE (replaces Compare) -->
+    <!-- SELF PROGRESS PAGE -->
     <div id="comparePage" class="page">
       <div class="bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition">
         <h2 class="font-bold text-lg mb-3"><i class="fas fa-user-chart text-indigo-600"></i> My Progress Dashboard</h2>
@@ -171,6 +174,9 @@
   let userData = null;
   let slotTimers = {};
   let syncTimer = null;
+
+  // Helper: get today's date in YYYY-MM-DD
+  function getTodayStr() { return new Date().toISOString().slice(0,10); }
   
   function loadAuth() { let a = localStorage.getItem("neet_auth"); if(a) usersAuth = JSON.parse(a); else usersAuth = {}; }
   function saveAuth() { localStorage.setItem("neet_auth", JSON.stringify(usersAuth)); }
@@ -178,8 +184,19 @@
   function registerUser(username, password) { if(usersAuth[username]) return false; usersAuth[username] = { passwordHash: hashPassword(password), data: defaultUserData() }; saveAuth(); return true; }
   function loginUser(username, password) { if(usersAuth[username] && usersAuth[username].passwordHash === hashPassword(password)) { currentUser = username; userData = usersAuth[currentUser].data; return true; } return false; }
   function saveCurrentUserData() { if(currentUser && userData) { usersAuth[currentUser].data = userData; saveAuth(); autoSyncToSheet(); } }
-  function defaultUserData() { return { checklist: defaultChecklist(), dailySlots: defaultSlots(), revisions: [], studyEntries: [] }; }
-  function defaultChecklist() { return ["📘 1 SUBJECT","📊 2 MCQ - CM","🎯 3 Mid Day -PYQ","🌙 4 Late Night PYQ","🔄 5 Revision","📖 6 Subject - short","🧠 7 Subject -PYQ","⚡ 8 Revision -PYQ"].map(t=>({text:t,completed:false})); }
+  function defaultUserData() { 
+    return { 
+      dailyChecklist: {},    // keyed by date: [{text, completed}]
+      dailySlots: {},        // keyed by date: [{slotName, timeRange, activity, completed, timerSeconds}]
+      revisions: [], 
+      studyEntries: [] 
+    }; 
+  }
+  
+  // Default checklist items (as array)
+  function defaultChecklist() { 
+    return ["📘 1 SUBJECT","📊 2 MCQ - CM","🎯 3 Mid Day -PYQ","🌙 4 Late Night PYQ","🔄 5 Revision","📖 6 Subject - short","🧠 7 Subject -PYQ","⚡ 8 Revision -PYQ"].map(t=>({text:t,completed:false})); 
+  }
   function defaultSlots() { return [
     { slotName:"6:00-8:00am", timeRange:"6:00-8:00", activity:"Yesterday Subject Revision", completed:false, timerSeconds:0 },
     { slotName:"8:00-9:00am", timeRange:"8:00-9:00", activity:"MIX 40 PYQ", completed:false, timerSeconds:0 },
@@ -190,25 +207,56 @@
     { slotName:"6:30-8:30pm", timeRange:"18:30-20:30", activity:"Revision", completed:false, timerSeconds:0 },
     { slotName:"10:00-12:00am", timeRange:"22:00-24:00", activity:"Late night PYQ", completed:false, timerSeconds:0 }
   ]; }
-  
+
+  // ---------- DAILY DATA HELPERS ----------
+  function getTodayChecklist() {
+    const today = getTodayStr();
+    if (!userData.dailyChecklist[today]) {
+      userData.dailyChecklist[today] = defaultChecklist();
+      saveCurrentUserData();
+    }
+    return userData.dailyChecklist[today];
+  }
+  function setTodayChecklist(newList) {
+    const today = getTodayStr();
+    userData.dailyChecklist[today] = newList;
+    saveCurrentUserData();
+  }
+  function getTodaySlots() {
+    const today = getTodayStr();
+    if (!userData.dailySlots[today]) {
+      userData.dailySlots[today] = defaultSlots();
+      saveCurrentUserData();
+    }
+    return userData.dailySlots[today];
+  }
+  function setTodaySlots(newSlots) {
+    const today = getTodayStr();
+    userData.dailySlots[today] = newSlots;
+    saveCurrentUserData();
+  }
+
   // ---------- SLOT TIMER FUNCTIONS ----------
   function startSlotTimer(idx) {
     if(slotTimers[idx]) return;
-    if(userData.dailySlots[idx].completed) {
-      userData.dailySlots[idx].timerSeconds = 0;
-      saveCurrentUserData();
+    const slots = getTodaySlots();
+    if(slots[idx].completed) {
+      slots[idx].timerSeconds = 0;
+      setTodaySlots(slots);
     }
-    let startTime = Date.now() - (userData.dailySlots[idx].timerSeconds || 0) * 1000;
+    let startTime = Date.now() - (slots[idx].timerSeconds || 0) * 1000;
     slotTimers[idx] = setInterval(() => {
-      if(userData.dailySlots[idx]) {
+      const currentSlots = getTodaySlots();
+      if(currentSlots[idx]) {
         let elapsed = Math.floor((Date.now() - startTime) / 1000);
-        if(!userData.dailySlots[idx].completed) {
-          userData.dailySlots[idx].timerSeconds = elapsed;
+        if(!currentSlots[idx].completed) {
+          currentSlots[idx].timerSeconds = elapsed;
         } else {
           stopSlotTimer(idx, false);
         }
+        // Update UI and save periodically
         renderSlots();
-        if(elapsed % 30 === 0) saveCurrentUserData();
+        if(elapsed % 30 === 0) setTodaySlots(currentSlots);
       }
     }, 1000);
     renderSlots();
@@ -218,29 +266,25 @@
     if(slotTimers[idx]) {
       clearInterval(slotTimers[idx]);
       delete slotTimers[idx];
-      let elapsedSec = userData.dailySlots[idx].timerSeconds || 0;
-      if(logHours && elapsedSec > 30 && !userData.dailySlots[idx].completed) {
+      const slots = getTodaySlots();
+      let elapsedSec = slots[idx].timerSeconds || 0;
+      if(logHours && elapsedSec > 30 && !slots[idx].completed) {
         let hours = elapsedSec / 3600;
-        let todayIST = new Date().toLocaleString("en-US", {timeZone:"Asia/Kolkata"}).split(",")[0];
-        let [m,d,y] = todayIST.split("/");
-        let todayStr = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-        let slotName = userData.dailySlots[idx].slotName;
+        let todayStr = getTodayStr();
+        let slotName = slots[idx].slotName;
         addStudyLog(todayStr, "Activity Slot", slotName, 0, hours, `Timer: ${slotName}`, false);
       }
-      userData.dailySlots[idx].timerSeconds = 0;
-      saveCurrentUserData();
+      slots[idx].timerSeconds = 0;
+      setTodaySlots(slots);
       renderSlots();
     }
   }
   
   function toggleTimer(idx) {
-    if(slotTimers[idx]) {
-      stopSlotTimer(idx, true);
-    } else {
-      startSlotTimer(idx);
-    }
+    if(slotTimers[idx]) stopSlotTimer(idx, true);
+    else startSlotTimer(idx);
   }
-  
+
   // ---------- REVISION FUNCTIONS ----------
   function generateSpacedRevisions(subject, topic, baseDate) {
     [2,4,7,14,30].forEach(day => {
@@ -278,7 +322,7 @@
     renderSelfProgress();
     return true;
   }
-  
+
   // ---------- DATA CONSTANTS ----------
   const ALL_SUBJECTS = ["Anatomy","Physiology","Biochemistry","Pathology","Pharmacology","Microbiology","Forensic Medicine","Medicine","Surgery","OBGY","Pediatrics","Orthopedics","Ophthalmology","ENT","Psychiatry","Radiology","Anesthesia","Dermatology","Community Medicine"];
   const COMPLETE_UNITS = { 
@@ -302,13 +346,12 @@
       saveUnits(); 
     } 
   }
-  
   function saveUnits() { localStorage.setItem("neet_units_v2", JSON.stringify(subjectUnits)); }
   function addCustomUnit(sub,unit) { if(!subjectUnits[sub]) subjectUnits[sub]=[]; if(!subjectUnits[sub].includes(unit)) subjectUnits[sub].push(unit); saveUnits(); updateUnitDropdown(sub); }
-  
+
   // ---------- RENDER FUNCTIONS ----------
   function updateHomeMetrics() { 
-    let today = new Date().toISOString().slice(0,10); 
+    let today = getTodayStr(); 
     let todayPyq=0, todayHours=0, totalPyq=0, totalHours=0; 
     (userData.studyEntries||[]).forEach(e=>{ 
       totalPyq+=e.pyqCount; 
@@ -320,41 +363,77 @@
     document.getElementById("totalPyqSumSpan").innerText = totalPyq; 
     document.getElementById("totalHoursSpan").innerText = totalHours.toFixed(1); 
   }
-  
+
   function renderChecklist() { 
     let cont=document.getElementById("checklistContainer"); 
     if(!cont) return; 
-    cont.innerHTML = userData.checklist.map((item,idx)=>`<div class="flex items-center gap-2 p-1 border-b hover:bg-gray-50 rounded"><input type="checkbox" ${item.completed?"checked":""} data-idx="${idx}" class="w-4 h-4"><span class="flex-1 text-sm ${item.completed?"line-through text-gray-400":""}">${escapeHtml(item.text)}</span><button class="text-red-400 text-xs hover:text-red-600 transition" data-del="${idx}"><i class="fas fa-trash-alt"></i></button></div>`).join(""); 
+    const today = getTodayStr();
+    document.getElementById("todayChecklistDate").innerText = today;
+    const checklist = getTodayChecklist();
+    cont.innerHTML = checklist.map((item,idx)=>`<div class="flex items-center gap-2 p-1 border-b hover:bg-gray-50 rounded"><input type="checkbox" ${item.completed?"checked":""} data-idx="${idx}" class="w-4 h-4"><span class="flex-1 text-sm ${item.completed?"line-through text-gray-400":""}">${escapeHtml(item.text)}</span><button class="text-red-400 text-xs hover:text-red-600 transition" data-del="${idx}"><i class="fas fa-trash-alt"></i></button></div>`).join(""); 
     attachChecklistEvents(); 
   }
   
   function attachChecklistEvents(){ 
-    document.querySelectorAll("#checklistContainer input").forEach(cb=>cb.addEventListener("change",(e)=>{ let idx=cb.dataset.idx; userData.checklist[idx].completed=cb.checked; saveCurrentUserData(); renderChecklist(); })); 
-    document.querySelectorAll("#checklistContainer [data-del]").forEach(btn=>btn.addEventListener("click",(e)=>{ let idx=btn.dataset.del; userData.checklist.splice(idx,1); saveCurrentUserData(); renderChecklist(); })); 
+    document.querySelectorAll("#checklistContainer input").forEach(cb=>cb.addEventListener("change",(e)=>{ 
+      let idx=cb.dataset.idx; 
+      const checklist = getTodayChecklist();
+      checklist[idx].completed = cb.checked; 
+      setTodayChecklist(checklist);
+      renderChecklist(); 
+    })); 
+    document.querySelectorAll("#checklistContainer [data-del]").forEach(btn=>btn.addEventListener("click",(e)=>{ 
+      let idx=btn.dataset.del; 
+      const checklist = getTodayChecklist();
+      checklist.splice(idx,1); 
+      setTodayChecklist(checklist);
+      renderChecklist(); 
+    })); 
   }
-  
+
   function renderSlots() { 
     let cont=document.getElementById("slotsContainer"); 
     if(!cont) return; 
-    let doneCount = userData.dailySlots.filter(s=>s.completed).length; 
+    const slots = getTodaySlots();
+    let doneCount = slots.filter(s=>s.completed).length; 
     document.getElementById("slotsDoneCount").innerText = doneCount; 
-    document.getElementById("slotsTotalCount").innerText = userData.dailySlots.length; 
-    cont.innerHTML = userData.dailySlots.map((slot,idx)=>`<div class="slot-card"><div class="flex flex-wrap items-center gap-2"><div class="w-28 text-xs font-bold">${slot.slotName}</div><input type="text" class="flex-1 border rounded p-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" value="${escapeHtml(slot.activity)}" data-slotidx="${idx}"><div class="text-xs font-mono w-16 bg-gray-100 rounded px-1 py-1">${Math.floor(slot.timerSeconds/60)}:${(slot.timerSeconds%60).toString().padStart(2,'0')}</div><button class="timer-btn ${slotTimers[idx]?'timer-running':''}" data-idx="${idx}">${slotTimers[idx]?'⏹️ Stop':'▶️ Start'}</button><label class="flex items-center gap-1"><input type="checkbox" class="slot-complete" data-cidx="${idx}" ${slot.completed?"checked":""}> Done</label></div><div class="text-[10px] text-gray-400 mt-1">🕒 ${slot.timeRange || 'Set time'} IST</div></div>`).join(""); 
+    document.getElementById("slotsTotalCount").innerText = slots.length; 
+    cont.innerHTML = slots.map((slot,idx)=>`<div class="slot-card"><div class="flex flex-wrap items-center gap-2"><div class="w-28 text-xs font-bold">${slot.slotName}</div><input type="text" class="flex-1 border rounded p-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" value="${escapeHtml(slot.activity)}" data-slotidx="${idx}"><div class="text-xs font-mono w-16 bg-gray-100 rounded px-1 py-1">${Math.floor(slot.timerSeconds/60)}:${(slot.timerSeconds%60).toString().padStart(2,'0')}</div><button class="timer-btn ${slotTimers[idx]?'timer-running':''}" data-idx="${idx}">${slotTimers[idx]?'⏹️ Stop':'▶️ Start'}</button><label class="flex items-center gap-1"><input type="checkbox" class="slot-complete" data-cidx="${idx}" ${slot.completed?"checked":""}> Done</label></div><div class="text-[10px] text-gray-400 mt-1">🕒 ${slot.timeRange || 'Set time'} IST</div></div>`).join(""); 
     attachSlotEvents(); 
   }
   
   function attachSlotEvents(){ 
-    document.querySelectorAll("input[data-slotidx]").forEach(inp=>inp.addEventListener("change",(e)=>{ let idx=inp.dataset.slotidx; userData.dailySlots[idx].activity=inp.value; saveCurrentUserData(); })); 
-    document.querySelectorAll(".slot-complete").forEach(ch=>ch.addEventListener("change",(e)=>{ let idx=ch.dataset.cidx; if(ch.checked) { if(slotTimers[idx]) stopSlotTimer(idx, true); userData.dailySlots[idx].completed=true; } else { userData.dailySlots[idx].completed=false; userData.dailySlots[idx].timerSeconds=0; } saveCurrentUserData(); renderSlots(); })); 
-    document.querySelectorAll(".timer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{ let idx=parseInt(btn.dataset.idx); toggleTimer(idx); })); 
+    document.querySelectorAll("input[data-slotidx]").forEach(inp=>inp.addEventListener("change",(e)=>{ 
+      let idx=inp.dataset.slotidx; 
+      const slots = getTodaySlots();
+      slots[idx].activity = inp.value; 
+      setTodaySlots(slots);
+    })); 
+    document.querySelectorAll(".slot-complete").forEach(ch=>ch.addEventListener("change",(e)=>{ 
+      let idx=ch.dataset.cidx; 
+      const slots = getTodaySlots();
+      if(ch.checked) { 
+        if(slotTimers[idx]) stopSlotTimer(idx, true); 
+        slots[idx].completed = true; 
+      } else { 
+        slots[idx].completed = false; 
+        slots[idx].timerSeconds = 0; 
+      } 
+      setTodaySlots(slots);
+      renderSlots(); 
+    })); 
+    document.querySelectorAll(".timer-btn").forEach(btn=>btn.addEventListener("click",(e)=>{ 
+      let idx=parseInt(btn.dataset.idx); 
+      toggleTimer(idx); 
+    })); 
   }
-  
+
   let currentCalDate = new Date();
   function renderCalendarAndReminders() { 
     if(!document.getElementById("calendarGrid")) return; 
     let year=currentCalDate.getFullYear(), month=currentCalDate.getMonth(); 
     let firstDay=new Date(year,month,1).getDay(), daysInMonth=new Date(year,month+1,0).getDate(); 
-    let todayStr=new Date().toISOString().slice(0,10); 
+    let todayStr=getTodayStr(); 
     let html=""; 
     for(let i=0;i<firstDay;i++) html+="<div class='calendar-day other-month'></div>"; 
     for(let d=1;d<=daysInMonth;d++){ 
@@ -382,7 +461,7 @@
     if(container) container.innerHTML = revs.length ? revs.map(r=>`<div class="revision-card flex justify-between items-center bg-white p-2 rounded shadow-sm"><div><b>${r.subject}</b> - ${r.topic}<br><span class="text-xs text-gray-500">${r.slot} ${r.completed?'✅':''}</span></div>${!r.completed?`<button class="complete-rev-date text-green-600 hover:text-green-800 transition" data-id="${r.id}">✔️</button>`:''}</div>`).join("") : "<div class='text-gray-400'>No revisions</div>"; 
     document.querySelectorAll(".complete-rev-date").forEach(btn=>btn.addEventListener("click",(e)=>{ let id=btn.dataset.id; let rev=userData.revisions.find(r=>r.id==id); if(rev) rev.completed=true; saveCurrentUserData(); renderCalendarAndReminders(); updateTopicPerformance(); showRevisionsForDate(date); renderSelfProgress(); })); 
   }
-  
+
   function updateTopicPerformance() { 
     let sub = document.getElementById("perfSubjectSelect")?.value || "Anatomy"; 
     let map = new Map(); 
@@ -391,13 +470,12 @@
     let tbody=document.getElementById("topicPerfTable"); 
     if(tbody) tbody.innerHTML = Array.from(map.entries()).map(([topic,vals])=>`<tr class="border-b hover:bg-gray-50"><td class="p-1">${escapeHtml(topic)}</td><td>${vals.pyq}</td><td>${vals.revDone}</td><td class="text-xs">${vals.lastRev||"—"}</td></tr>`).join(""); 
   }
-  
-  // ---------- SELF PROGRESS (replaces compare) ----------
+
+  // ---------- SELF PROGRESS ----------
   function renderSelfProgress() {
     const entries = userData.studyEntries || [];
     const revs = userData.revisions || [];
     
-    // Stats
     const uniqueDays = new Set(entries.map(e => e.date)).size;
     const totalHours = entries.reduce((s,e) => s + (e.hours||0), 0);
     const totalPyq = entries.reduce((s,e) => s + (e.pyqCount||0), 0);
@@ -408,7 +486,6 @@
     document.getElementById("selfAvgHours").innerText = avgHours.toFixed(1);
     document.getElementById("selfAvgPyq").innerText = avgPyq.toFixed(1);
     
-    // Chart: Study hours per day (last 14 days)
     const today = new Date();
     const dates = [];
     const hoursData = [];
@@ -444,7 +521,6 @@
       }
     });
     
-    // Subject Mastery
     const subMap = new Map();
     entries.forEach(e => {
       if(!subMap.has(e.subject)) subMap.set(e.subject, { pyq: 0, hours: 0 });
@@ -457,7 +533,6 @@
       sortedSubs.map(([sub, data]) => `<div class="flex justify-between border-b py-1"><span>${sub}</span><span class="text-gray-500">${data.pyq} PYQ · ${data.hours.toFixed(1)}h</span></div>`).join("") :
       "<div class='text-gray-400'>No study data yet</div>";
     
-    // Revision Progress
     const totalRevs = revs.length;
     const doneRevs = revs.filter(r => r.completed).length;
     const pct = totalRevs > 0 ? Math.round((doneRevs/totalRevs)*100) : 0;
@@ -468,13 +543,12 @@
       ${revs.filter(r => !r.completed).length > 5 ? `<div class="text-xs text-gray-400">+${revs.filter(r => !r.completed).length - 5} more</div>` : ''}
     `;
     
-    // Recent Activity
     const sortedEntries = [...entries].sort((a,b) => b.date.localeCompare(a.date)).slice(0,7);
     document.getElementById("selfRecentActivity").innerHTML = sortedEntries.length ?
       sortedEntries.map(e => `<div class="flex justify-between border-b py-1"><span>📖 ${e.subject}: ${e.topic}</span><span class="text-gray-400">${e.date} · ${e.hours}h · ${e.pyqCount}PYQ</span></div>`).join("") :
       "<div class='text-gray-400'>No recent activity</div>";
   }
-  
+
   function updateFlipCountdown() { 
     let target = new Date(2026,7,30); 
     let now = new Date(); 
@@ -490,7 +564,7 @@
     document.getElementById("secsBox").innerText = Math.floor((diff%60000)/1000).toString().padStart(2,'0'); 
     setTimeout(updateFlipCountdown,1000); 
   }
-  
+
   // ---------- SYNC FUNCTIONS ----------
   let syncInterval;
   function autoSyncToSheet() { 
@@ -516,7 +590,7 @@
       setTimeout(() => { document.getElementById("syncStatus").innerHTML = '<i class="fas fa-circle text-green-500 text-xs"></i> Live'; }, 2000);
     }, 1000);
   }
-  
+
   // ---------- UI SETUP ----------
   function populateSubjectSelectors() { 
     let subjSelect=document.getElementById("perfSubjectSelect"); 
@@ -547,10 +621,34 @@
     document.getElementById("perfSubjectSelect")?.addEventListener("change",()=>{ updateTopicPerformance(); displaySubjectUnits(document.getElementById("perfSubjectSelect").value); });
     renderChecklist(); renderSlots(); renderCalendarAndReminders(); updateHomeMetrics(); updateTopicPerformance(); renderSelfProgress();
     
-    document.getElementById("addCustomTargetBtn").onclick=()=>{ let t=prompt("New target"); if(t) userData.checklist.push({text:t,completed:false}); saveCurrentUserData(); renderChecklist(); };
-    document.getElementById("resetTargetsBtn").onclick=()=>{ userData.checklist=defaultChecklist(); saveCurrentUserData(); renderChecklist(); };
-    document.getElementById("saveSlotsBtn").onclick=()=>{ saveCurrentUserData(); alert("Slots saved"); };
-    document.getElementById("resetDefaultSlotsBtn").onclick=()=>{ Object.keys(slotTimers).forEach(k => stopSlotTimer(parseInt(k), false)); userData.dailySlots=defaultSlots(); saveCurrentUserData(); renderSlots(); };
+    document.getElementById("addCustomTargetBtn").onclick=()=>{ 
+      let t=prompt("New target"); 
+      if(t) {
+        const checklist = getTodayChecklist();
+        checklist.push({text:t,completed:false}); 
+        setTodayChecklist(checklist);
+        renderChecklist(); 
+      }
+    };
+    document.getElementById("resetTargetsBtn").onclick=()=>{ 
+      if(confirm("Reset today's checklist?")) {
+        setTodayChecklist(defaultChecklist()); 
+        renderChecklist(); 
+      }
+    };
+    document.getElementById("saveSlotsBtn").onclick=()=>{ 
+      // Slots are already saved on each change, but we force a save
+      const slots = getTodaySlots();
+      setTodaySlots(slots);
+      alert("Slots saved"); 
+    };
+    document.getElementById("resetDefaultSlotsBtn").onclick=()=>{ 
+      if(confirm("Reset today's slots?")) {
+        Object.keys(slotTimers).forEach(k => stopSlotTimer(parseInt(k), false)); 
+        setTodaySlots(defaultSlots()); 
+        renderSlots(); 
+      }
+    };
     document.getElementById("prevMonthBtn").onclick=()=>{ currentCalDate.setMonth(currentCalDate.getMonth()-1); renderCalendarAndReminders(); };
     document.getElementById("nextMonthBtn").onclick=()=>{ currentCalDate.setMonth(currentCalDate.getMonth()+1); renderCalendarAndReminders(); };
     document.getElementById("studyLogForm").onsubmit=(e)=>{ e.preventDefault(); addStudyLog(document.getElementById("logDate").value, document.getElementById("logSubject").value, document.getElementById("logUnitTopic").value, document.getElementById("logPyqCount").value, document.getElementById("logHours").value, document.getElementById("logNotes").value, document.getElementById("generateRevisionCheckbox").checked); document.getElementById("logPyqCount").value="0"; document.getElementById("logNotes").value=""; alert("Logged! Revisions created."); };
@@ -578,7 +676,7 @@
     });
     
     updateFlipCountdown(); startAutoSync();
-    document.getElementById("logDate").value = new Date().toISOString().slice(0,10);
+    document.getElementById("logDate").value = getTodayStr();
     displaySubjectUnits(document.getElementById("perfSubjectSelect")?.value || "Anatomy");
   }
   
